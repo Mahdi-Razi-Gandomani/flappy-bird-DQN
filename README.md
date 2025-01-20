@@ -48,5 +48,5 @@ This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB)
 1. Train the agent by running the script:
 
    ```bash
-   python flappy_bird_dqn_ucb.py
+   python flappyBirdDQN.py
 2. The trained model will be saved as `flappy_bird_model_ucb.h5`
