@@ -1,6 +1,6 @@
 # Flappy Bird Reinforcement Learning with UCB Exploration
 
-This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB) exploration to train an agent to play the Flappy Bird game. The agent learns to maximize its score by interacting with the environment and using a combination of Q-learning and UCB for exploration.
+This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB) exploration to train an model to play the Flappy Bird game. The model learns to maximize its score by interacting with the environment and using a combination of Q-learning and UCB for exploration.
 
 ---
 
@@ -8,14 +8,14 @@ This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB)
 
 - **Deep Q-Network (DQN)**:
   - Uses a neural network to approximate the Q-value function.
-  - Trains the agent to maximize cumulative rewards.
+  - Trains the model to maximize cumulative rewards.
 
 - **Upper Confidence Bound (UCB) Exploration**:
   - Balances exploration and exploitation by selecting actions based on their estimated Q-values and uncertainty.
 
 - **Experience Replay and Training**:
-  - Stores past experiences in a replay buffer to train the agent on a diverse set of experiences.
-  - Trains the agent for a specified number of episodes.
+  - Stores past experiences in a replay buffer to train the model on a diverse set of experiences.
+  - Trains the model for a specified number of episodes.
 ---
 
 ## Code Structure
@@ -38,7 +38,7 @@ This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB)
 - Actions are selected based on the highest UCB score.
 
 ### 5. Training Loop
-- The agent interacts with the environment, collects experiences, and updates the Q-network.
+- The model interacts with the environment, collects experiences, and updates the Q-network.
 - Training is performed for a specified number of episodes.
 
 ---
