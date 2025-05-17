@@ -1,6 +1,6 @@
-# Flappy Bird Reinforcement Learning with UCB Exploration
+# Flappy Bird Reinforcement Learning
 
-This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB) exploration to train an model to play the Flappy Bird game. The model learns to maximize its score by interacting with the environment and using a combination of Q-learning and UCB for exploration.
+This project implements a Deep Q-Network (DQN) with Upper Confidence Bound (UCB) exploration to train a reinforcement learning model to play the Flappy Bird game. The model learns to maximize its score by interacting with the environment and using a combination of Q-learning and UCB for exploration.
 
 ---
 
