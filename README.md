@@ -7,7 +7,7 @@ It leverages **experience replay**, **target networks**, and **epsilon-greedy ex
 
 ## Features
 
-- Uses **Deep Q-Learning (DQN)** with experience replay
+- **Deep Q-Learning (DQN)** with experience replay
 - Target network updates for stable training
 - Epsilon-greedy action selection
 ---
