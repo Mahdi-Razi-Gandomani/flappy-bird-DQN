@@ -75,7 +75,6 @@ def agent_learn(experiences, gamma):
     optimizer.apply_gradients(zip(gradients, q_network.trainable_variables))
 
 epsilon = EPSILON_START
-step_count = 0
 total_point_history = []
 memory_buffer = deque(maxlen=MEMORY_SIZE)
 start = time.time()
@@ -98,7 +97,6 @@ for i in range(MAX_EPISODES):
         memory_buffer.append(experience(state, action, reward, next_state, done))
         state = next_state.copy()
         total_points += reward
-        step_count += 1
         if t % NUM_STEPS_FOR_UPDATE == 0 and len(memory_buffer) >= BATCH_SIZE:
             mini_batch = np.random.choice(len(memory_buffer), BATCH_SIZE, replace=False)
             experiences = [memory_buffer[idx] for idx in mini_batch]
@@ -106,18 +104,20 @@ for i in range(MAX_EPISODES):
             agent_learn(experiences, GAMMA)
         
         # Update target
-        if step_count % UPDATE_TARGET_EVERY == 0:
+        if t % UPDATE_TARGET_EVERY == 0:
             target_q_network.set_weights(q_network.get_weights())
 
         if done:
             break
 
+    epsilon = max(EPSILON_END, epsilon * EPSILON_DECAY)
+    
     total_point_history.append(total_points)
-    av_latest_points = np.mean(total_point_history[-num_p_av:])
-    print(f"\rEpisode {i+1} | Total point average of the last {num_p_av} episodes: {av_latest_points:.2f}", end="")
+    av_latest_points = np.mean(total_point_history[-NUM_P_AV:])
+    print(f"\rEpisode {i+1} | Total point average of the last {NUM_P_AV} episodes: {av_latest_points:.2f}", end="")
 
-    if (i+1) % num_p_av == 0:
-        print(f"\rEpisode {i+1} | Total point average of the last {num_p_av} episodes: {av_latest_points:.2f}")
+    if (i+1) % NUM_P_AV == 0:
+        print(f"\rEpisode {i+1} | Total point average of the last {NUM_P_AV} episodes: {av_latest_points:.2f}")
 
 q_network.save('flappy_bird_model.h5')
 
