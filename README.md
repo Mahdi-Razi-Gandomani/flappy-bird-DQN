@@ -67,26 +67,6 @@ Once training is complete, the script automatically runs a few test episodes:
 ```
 env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
 ```
-
-You can also load and run the saved model manually:
-```python
-from tensorflow.keras.models import load_model
-import flappy_bird_gymnasium
-import gymnasium as gym
-import numpy as np
-
-env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
-model = load_model('flappy_bird_model.h5')
-
-observation, info = env.reset()
-done = False
-while not done:
-    state_input = np.expand_dims(observation, axis=0)
-    q_values = model.predict(state_input)
-    action = np.argmax(q_values[0])
-    state, reward, terminated, truncated, _ = env.step(action)
-    done = terminated or truncated
-```
 ---
 ## Learning Curve
 
