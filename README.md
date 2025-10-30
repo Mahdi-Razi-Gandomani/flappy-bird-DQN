@@ -11,7 +11,6 @@ Below is a GIF showing the DQN agent successfully playing Flappy Bird after trai
 
 <video src="results/demo.mov" autoplay loop muted></video>
 
-
 ---
 
 ## Features
