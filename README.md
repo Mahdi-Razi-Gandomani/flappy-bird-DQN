@@ -7,7 +7,7 @@ It leverages **experience replay**, **target networks**, and **epsilon-greedy ex
 
 ## Trained Agent Demo
 
-### Below is a GIF showing the DQN agent successfully playing Flappy Bird after training.
+Below is a GIF showing the DQN agent successfully playing Flappy Bird after training.
 
 ![Flappy Bird agent playing autonomously](results/flappy_bird_agent_play.gif)
 
@@ -88,9 +88,9 @@ while not done:
 ---
 ## Learning Curve
 
-### The following plot shows the average reward progression over 5000 episodes of training:
+The following plot shows the average reward progression over 5000 episodes of training:
 
-![Learning Curve](results/learning_curve.jpg) 
+![Learning Curve](results/learning_curve.png) 
 
 ---
 
