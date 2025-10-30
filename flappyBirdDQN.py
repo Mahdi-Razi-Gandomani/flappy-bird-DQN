@@ -119,8 +119,6 @@ for i in range(MAX_EPISODES):
     if (i+1) % NUM_P_AV == 0:
         print(f"\rEpisode {i+1} | Total point average of the last {NUM_P_AV} episodes: {av_latest_points:.2f}")
 
-q_network.save('flappy_bird_model.h5')
-
 tot_time = time.time() - start
 print(f"\nTotal Runtime: {tot_time:.2f} s ({(tot_time/60):.2f} min)")
 
