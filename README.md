@@ -9,7 +9,7 @@ It leverages **experience replay**, **target networks**, and **epsilon-greedy ex
 
 Below is a GIF showing the DQN agent successfully playing Flappy Bird after training.
 
-<img src="results/demo.gif" alt="Flappy Bird agent playing autonomously" width="400">
+<img src="results/demo.gif" alt="Flappy Bird agent playing autonomously" width="400" height="600">
 
 
 ---
