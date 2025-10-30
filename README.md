@@ -5,6 +5,14 @@ It leverages **experience replay**, **target networks**, and **epsilon-greedy ex
 
 ---
 
+## Trained Agent Demo
+
+### Below is a GIF showing the DQN agent successfully playing Flappy Bird after training.
+
+![Flappy Bird agent playing autonomously](results/flappy_bird_agent_play.gif)
+
+---
+
 ## Features
 
 - **Deep Q-Learning (DQN)** with experience replay
@@ -48,8 +56,8 @@ python3 flappyBirdDQN.py
 
 During training, you'll see logs like:
 ```
-Episode 100 | Total point average of the last 100 episodes: 2.35
-Episode 200 | Total point average of the last 100 episodes: 5.42
+Episode 100 | Total point average of the last 100 episodes: -6.28
+Episode 200 | Total point average of the last 100 episodes: -2.11
 ```
 
 ### 3. Watch the trained agent play
@@ -77,6 +85,12 @@ while not done:
     state, reward, terminated, truncated, _ = env.step(action)
     done = terminated or truncated
 ```
+---
+## Learning Curve
+
+### The following plot shows the average reward progression over 5000 episodes of training:
+
+![Learning Curve](results/learning_curve.jpg) 
 
 ---
 
