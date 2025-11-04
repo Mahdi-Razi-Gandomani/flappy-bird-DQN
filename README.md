@@ -1,7 +1,6 @@
 # Flappy Bird Reinforcement Learning
 
-This project implements a **Deep Q-Network (DQN)** agent to play the **Flappy Bird** game.  
-It leverages **experience replay**, **target networks**, and **epsilon-greedy exploration** to train a neural network that learns to play Flappy Bird autonomously.
+This project implements a **Deep Q-Network (DQN)** agent to play the **Flappy Bird** game autonomously.  
 
 ---
 
