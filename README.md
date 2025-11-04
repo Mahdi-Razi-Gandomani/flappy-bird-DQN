@@ -62,11 +62,10 @@ Episode 200 | Total point average of the last 100 episodes: -2.11
 ```
 
 ### 3. Watch the trained agent play
-Once training is complete, the script automatically runs a few test episodes:
-```
-env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
-```
+Once training is complete, the script automatically runs a few test episodes
+
 ---
+
 ## Learning Curve
 
 The following plot shows the average reward progression over 5000 episodes of training:
