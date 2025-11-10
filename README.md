@@ -71,21 +71,3 @@ Once training is complete, the script automatically runs a few test episodes
 The following plot shows the average reward progression over 5000 episodes of training:
 
 ![Learning Curve](results/learning_curve.png) 
-
----
-
-## Hyperparameters
-
-| Parameter | Description | Default |
-|------------|-------------|----------|
-| `MEMORY_SIZE` | Size of replay memory | 100000 |
-| `GAMMA` | Discount factor | 0.99 |
-| `ALPHA` | Learning rate | 1e-4 |
-| `BATCH_SIZE` | Mini-batch size | 128 |
-| `EPSILON_START` | Initial exploration rate | 1.0 |
-| `EPSILON_END` | Minimum exploration rate | 0.02 |
-| `EPSILON_DECAY` | Epsilon decay factor | 0.995 |
-| `UPDATE_TARGET_EVERY` | Target network update frequency | 1000 steps |
-| `NUM_P_AV` | Average score window size | 100 |
-
----
