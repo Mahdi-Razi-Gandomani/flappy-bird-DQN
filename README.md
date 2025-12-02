@@ -21,6 +21,14 @@ Below is a GIF showing the DQN agent successfully playing Flappy Bird after trai
 - Epsilon-greedy action selection
 ---
 
+## Learning Curve
+
+The following plot shows the average reward progression over 5000 episodes of training:
+
+![Learning Curve](results/learning_curve.png) 
+
+---
+
 ## Code Structure
 
 ### 1. Environment Setup
@@ -64,10 +72,3 @@ Episode 200 | Total point average of the last 100 episodes: -2.11
 ### 3. Watch the trained agent play
 Once training is complete, the script automatically runs a few test episodes
 
----
-
-## Learning Curve
-
-The following plot shows the average reward progression over 5000 episodes of training:
-
-![Learning Curve](results/learning_curve.png) 
