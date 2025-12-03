@@ -75,11 +75,13 @@ total_point_history = []
 memory_buffer = deque(maxlen=MEMORY_SIZE)
 start = time.time()
 
+global_counter = 0
 for i in range(MAX_EPISODES):
     state, _ = env.reset()
     total_points = 0
 
     for t in range(MAX_TIMESTEPS):
+        global_counter += 1
         if np.random.rand() < epsilon:
             action = np.random.randint(num_actions)
         else:
@@ -100,7 +102,7 @@ for i in range(MAX_EPISODES):
             agent_learn(experiences, GAMMA)
         
         # Update target
-        if t % UPDATE_TARGET_EVERY == 0:
+        if global_counter % UPDATE_TARGET_EVERY == 0:
             target_q_network.set_weights(q_network.get_weights())
 
         if done:
