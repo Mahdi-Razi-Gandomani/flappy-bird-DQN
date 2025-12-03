@@ -10,20 +10,18 @@ from tensorflow.keras.losses import MSE
 from tensorflow.keras.optimizers.legacy import Adam
 
 MEMORY_SIZE = 100000 
-GAMMA = 0.99
+GAMMA = 0.995
 ALPHA = 1e-4
 BATCH_SIZE = 128
 UPDATE_TARGET_EVERY = 1000
-NUM_STEPS_FOR_UPDATE = 4 # perform a learning update every C time steps
-
+NUM_STEPS_FOR_UPDATE = 5
 EPSILON_START = 1.0
 EPSILON_END = 0.02
 EPSILON_DECAY = 0.995
-
 MAX_EPISODES = 10000    
 MAX_TIMESTEPS = 10000
 NUM_P_AV = 100
-NUM_TEST_EPISODES = 10
+
 
 env = gym.make('FlappyBird-v0', use_lidar=False)
 state, _ = env.reset()
@@ -59,12 +57,10 @@ def compute_loss(experiences, gamma, q_network, target_q_network):
     next_actions = tf.argmax(next_q_values, axis=1)
     target_q_values = target_q_network(next_states)
     
-    max_qsa = tf.gather_nd(target_q_values, tf.stack([tf.range(target_q_values.shape[0]),
-                                                      tf.cast(next_actions, tf.int32)], axis=1))
+    max_qsa = tf.gather_nd(target_q_values, tf.stack([tf.range(target_q_values.shape[0]), tf.cast(next_actions, tf.int32)], axis=1))
     y_targets = rewards + (gamma * max_qsa * (1 - done_vals))
     q_values = q_network(states)
-    q_values = tf.gather_nd(q_values, tf.stack([tf.range(q_values.shape[0]),
-                                                tf.cast(actions, tf.int32)], axis=1))
+    q_values = tf.gather_nd(q_values, tf.stack([tf.range(q_values.shape[0]), tf.cast(actions, tf.int32)], axis=1))
     loss = MSE(y_targets, q_values)
     return loss
 
@@ -114,17 +110,15 @@ for i in range(MAX_EPISODES):
     
     total_point_history.append(total_points)
     av_latest_points = np.mean(total_point_history[-NUM_P_AV:])
-    print(f"\rEpisode {i+1} | Total point average of the last {NUM_P_AV} episodes: {av_latest_points:.2f}", end="")
+    print(f"\rEpisode {i+1}.             Average of the last {NUM_P_AV} episodes: {av_latest_points:.1f}", end="")
 
     if (i+1) % NUM_P_AV == 0:
-        print(f"\rEpisode {i+1} | Total point average of the last {NUM_P_AV} episodes: {av_latest_points:.2f}")
+        print(f"\rEpisode {i+1}.             Average of the last {NUM_P_AV} episodes: {av_latest_points:.1f}")
 
-tot_time = time.time() - start
-print(f"\nTotal Runtime: {tot_time:.2f} s ({(tot_time/60):.2f} min)")
 
-# Run the environment after training
+# Test Runs
 env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
-for ep in range(NUM_TEST_EPISODES):
+for ep in range(5):
     observation, info = env.reset()
 
     for step in range(MAX_TIMESTEPS):
