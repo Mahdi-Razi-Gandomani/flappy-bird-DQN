@@ -10,11 +10,11 @@ from tensorflow.keras.losses import MSE
 from tensorflow.keras.optimizers.legacy import Adam
 
 MEMORY_SIZE = 100000 
-GAMMA = 0.995
+GAMMA = 0.99
 ALPHA = 1e-4
 BATCH_SIZE = 128
 UPDATE_TARGET_EVERY = 1000
-NUM_STEPS_FOR_UPDATE = 5
+NUM_STEPS_FOR_UPDATE = 4
 EPSILON_START = 1.0
 EPSILON_END = 0.02
 EPSILON_DECAY = 0.995
