@@ -72,7 +72,7 @@ This reward structure encourages the agent to stay alive while heavily rewarding
 
 2. **Episode Loop**: For each episode:
    - Reset the environment
-   - Select actions using epsilon-greedy policy
+   - Select actions using epsilon-greedy
    - Store experiences in replay buffer
    - Sample random mini-batches and train the network
    - Update target network periodically
@@ -101,9 +101,5 @@ cd flappy-bird-DQN
 python3 flappyBirdDQN.py
 ```
 
-The agent will:
-- Train for 3,000 episodes
-- Print progress every episode showing the average score of the last 500 episodes
-- Display 5 test episodes with visualization after training completes
 
 
