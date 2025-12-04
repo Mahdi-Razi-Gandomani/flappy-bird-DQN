@@ -60,7 +60,7 @@ target_q_network.eval()
 experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
 optimizer = optim.Adam(q_network.parameters(), lr=ALPHA)
 
-def compute_loss(experiences, gamma, q_network, target_q_network):
+def compute_loss(experiences, q_network, target_q_network):
     states, actions, rewards, next_states, done_vals = experiences
     
     states = torch.FloatTensor(np.vstack(states)).to(device)
@@ -74,7 +74,7 @@ def compute_loss(experiences, gamma, q_network, target_q_network):
         next_actions = next_q_values.argmax(dim=1)
         target_q_values = target_q_network(next_states)
         max_qsa = target_q_values.gather(1, next_actions.unsqueeze(1)).squeeze(1)
-        y_targets = rewards + (gamma * max_qsa * (1 - done_vals))
+        y_targets = rewards + (GAMMA * max_qsa * (1 - done_vals))
     
     q_values = q_network(states)
     q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
@@ -84,8 +84,8 @@ def compute_loss(experiences, gamma, q_network, target_q_network):
 
 
 
-def agent_learn(experiences, gamma):
-    loss = compute_loss(experiences, gamma, q_network, target_q_network)
+def agent_learn(experiences):
+    loss = compute_loss(experiences, q_network, target_q_network)
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
@@ -134,7 +134,7 @@ for i in range(MAX_EPISODES):
                 mini_batch = np.random.choice(len(memory_buffer), BATCH_SIZE, replace=False)
                 experiences = [memory_buffer[idx] for idx in mini_batch]
                 experiences = experience(*zip(*experiences))
-                agent_learn(experiences, GAMMA)
+                agent_learn(experiences)
         
         if global_counter % UPDATE_TARGET_EVERY == 0:
             target_q_network.load_state_dict(q_network.state_dict())
