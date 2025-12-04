@@ -1,109 +1,144 @@
 import time
-from collections import deque, namedtuple, defaultdict
+from collections import deque, namedtuple
 import flappy_bird_gymnasium
 import gymnasium as gym
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Input
-from tensorflow.keras.losses import MSE
-from tensorflow.keras.optimizers.legacy import Adam
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+import random
+
 
 MEMORY_SIZE = 100000 
 GAMMA = 0.99
-ALPHA = 1e-4
+ALPHA = 1e-3
 BATCH_SIZE = 128
 UPDATE_TARGET_EVERY = 1000
 NUM_STEPS_FOR_UPDATE = 4
 EPSILON_START = 1.0
-EPSILON_END = 0.02
+EPSILON_END = 0.01
 EPSILON_DECAY = 0.995
-MAX_EPISODES = 10000    
+MAX_EPISODES = 3000    
 MAX_TIMESTEPS = 10000
-NUM_P_AV = 100
+NUM_P_AV = 500
 
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(SEED)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 env = gym.make('FlappyBird-v0', use_lidar=False)
-state, _ = env.reset()
-state_size = env.observation_space.shape
+state, _ = env.reset(seed=SEED)
+state_size = env.observation_space.shape[0]
 num_actions = env.action_space.n
 
-def build_q_network():
-    model = Sequential([
-        Input(shape=state_size),
-        Dense(units=128, activation='relu'),
-        Dense(units=64, activation='relu'),
-        Dense(units=64, activation='relu'),
-        Dense(units=num_actions, activation='linear'),
-    ])
-    return model
 
-q_network = build_q_network()
-target_q_network = build_q_network()
-target_q_network.set_weights(q_network.get_weights())
+
+class QNetwork(nn.Module):
+    def __init__(self, state_size, num_actions):
+        super(QNetwork, self).__init__()
+        self.fc1 = nn.Linear(state_size, 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, num_actions)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+q_network = QNetwork(state_size, num_actions).to(device)
+target_q_network = QNetwork(state_size, num_actions).to(device)
+target_q_network.load_state_dict(q_network.state_dict())
+target_q_network.eval()
 
 # Store experiences as named tuples
 experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
-optimizer = Adam(learning_rate=ALPHA)
+optimizer = optim.Adam(q_network.parameters(), lr=ALPHA)
 
 def compute_loss(experiences, gamma, q_network, target_q_network):
     states, actions, rewards, next_states, done_vals = experiences
-    states = tf.convert_to_tensor(np.vstack(states))
-    next_states = tf.convert_to_tensor(np.vstack(next_states))
-    rewards = tf.convert_to_tensor(rewards, dtype=tf.float32)
-    done_vals = tf.convert_to_tensor(done_vals, dtype=tf.float32)
-
-    next_q_values = q_network(next_states)
-    next_actions = tf.argmax(next_q_values, axis=1)
-    target_q_values = target_q_network(next_states)
     
-    max_qsa = tf.gather_nd(target_q_values, tf.stack([tf.range(target_q_values.shape[0]), tf.cast(next_actions, tf.int32)], axis=1))
-    y_targets = rewards + (gamma * max_qsa * (1 - done_vals))
+    states = torch.FloatTensor(np.vstack(states)).to(device)
+    next_states = torch.FloatTensor(np.vstack(next_states)).to(device)
+    actions = torch.LongTensor(actions).to(device)
+    rewards = torch.FloatTensor(rewards).to(device)
+    done_vals = torch.FloatTensor(done_vals).to(device)
+
+    with torch.no_grad():
+        next_q_values = q_network(next_states)
+        next_actions = next_q_values.argmax(dim=1)
+        target_q_values = target_q_network(next_states)
+        max_qsa = target_q_values.gather(1, next_actions.unsqueeze(1)).squeeze(1)
+        y_targets = rewards + (gamma * max_qsa * (1 - done_vals))
+    
     q_values = q_network(states)
-    q_values = tf.gather_nd(q_values, tf.stack([tf.range(q_values.shape[0]), tf.cast(actions, tf.int32)], axis=1))
-    loss = MSE(y_targets, q_values)
+    q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
+    
+    loss = F.mse_loss(q_values, y_targets)
     return loss
 
+
+
 def agent_learn(experiences, gamma):
-    with tf.GradientTape() as tape:
-        loss = compute_loss(experiences, gamma, q_network, target_q_network)
-    gradients = tape.gradient(loss, q_network.trainable_variables)
-    optimizer.apply_gradients(zip(gradients, q_network.trainable_variables))
+    loss = compute_loss(experiences, gamma, q_network, target_q_network)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    return loss.item()
+
 
 epsilon = EPSILON_START
 total_point_history = []
 memory_buffer = deque(maxlen=MEMORY_SIZE)
-start = time.time()
+
 
 global_counter = 0
 for i in range(MAX_EPISODES):
-    state, _ = env.reset()
+    state, _ = env.reset(seed=SEED + i)
     total_points = 0
 
     for t in range(MAX_TIMESTEPS):
         global_counter += 1
+        
         if np.random.rand() < epsilon:
             action = np.random.randint(num_actions)
         else:
-            state_qn = np.expand_dims(state, axis=0)
-            q_values = q_network(state_qn).numpy()[0]
-            action = np.argmax(q_values)
+            with torch.no_grad():
+                state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
+                q_values = q_network(state_tensor)
+                action = q_values.argmax().item()
+
 
         next_state, reward, terminated, truncated, _ = env.step(action)
         done = terminated or truncated
+        
+        # Pass a pipe
+        if reward > 0.5:
+            reward = 10.0
+        elif done:  # Died
+            reward = -10.0
+        else:  # Staying alive
+            reward = 0.1
 
         memory_buffer.append(experience(state, action, reward, next_state, done))
         state = next_state.copy()
         total_points += reward
-        if t % NUM_STEPS_FOR_UPDATE == 0 and len(memory_buffer) >= BATCH_SIZE:
-            mini_batch = np.random.choice(len(memory_buffer), BATCH_SIZE, replace=False)
-            experiences = [memory_buffer[idx] for idx in mini_batch]
-            experiences = experience(*zip(*experiences))
-            agent_learn(experiences, GAMMA)
         
-        # Update target
+        if len(memory_buffer) >= 5000:
+            if t % NUM_STEPS_FOR_UPDATE == 0:
+                mini_batch = np.random.choice(len(memory_buffer), BATCH_SIZE, replace=False)
+                experiences = [memory_buffer[idx] for idx in mini_batch]
+                experiences = experience(*zip(*experiences))
+                agent_learn(experiences, GAMMA)
+        
         if global_counter % UPDATE_TARGET_EVERY == 0:
-            target_q_network.set_weights(q_network.get_weights())
+            target_q_network.load_state_dict(q_network.state_dict())
 
         if done:
             break
@@ -118,17 +153,27 @@ for i in range(MAX_EPISODES):
         print(f"\rEpisode {i+1}.             Average of the last {NUM_P_AV} episodes: {av_latest_points:.1f}")
 
 
+
+
 # Test Runs
 env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
+test_scores = []
 for ep in range(5):
-    observation, info = env.reset()
+    observation, info = env.reset(seed=SEED + MAX_EPISODES + ep)
+    episode_reward = 0
 
     for step in range(MAX_TIMESTEPS):
-        state_input = np.expand_dims(observation, axis=0)
-        q_values = q_network.predict(state_input)
-        action = np.argmax(q_values[0])
+        with torch.no_grad():
+            state_tensor = torch.FloatTensor(observation).unsqueeze(0).to(device)
+            q_values = q_network(state_tensor)
+            action = q_values.argmax().item()
+        
         observation, reward, terminated, truncated, info = env.step(action)
+        episode_reward += reward
         
         if terminated or truncated:
+            test_scores.append(episode_reward)
+            print(episode_reward)
             break
+
 env.close()
