@@ -9,14 +9,14 @@ A Deep Q-Network (DQN) implementation with Double Q-Learning that trains an AI a
 Below is a GIF showing the DQN agent successfully playing Flappy Bird after training.
 
 <p align="center">
-  <img src="results/demo.gif" alt="Flappy Bird agent playing autonomously">
+  <img src="results/test_demo.gif" alt="Flappy Bird agent playing autonomously">
 </p>
 
 ---
 
 ## Features
 
-- **Double DQN Architecture**: Reduces overestimation bias by separating action selection from action evaluation
+- **Double DQN**: Reduces overestimation bias by separating action selection from action evaluation
 - **Experience Replay**: Stores past experiences in a replay buffer for more stable learning
 - **Target Network**: Maintains a separate target network that updates periodically for training stability
 - **Epsilon-Greedy Exploration**: Balances exploration and exploitation with decaying epsilon
@@ -47,9 +47,9 @@ pip install flappy-bird-gymnasium gymnasium numpy torch
 
 ---
 
-## Algorithm Details
+## Details
 
-### Network Architecture
+### Network
 
 The Q-Network consists of:
 - Input layer: State size (12 features from the environment)
