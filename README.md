@@ -25,9 +25,9 @@ Below is a GIF showing the DQN agent successfully playing Flappy Bird after trai
 
 ## Learning Curve
 
-The following plot shows the average reward progression over 5000 episodes of training:
+The following plot shows the average reward progression over 3000 episodes of training:
 
-![Learning Curve](results/learning_curve.png) 
+![Learning Curve](results/avg_reward.png) 
 
 ---
 
