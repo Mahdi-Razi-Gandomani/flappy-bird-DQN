@@ -68,7 +68,7 @@ This reward structure encourages the agent to stay alive while heavily rewarding
 
 ## How It Works
 
-1. **Initialization**: The agent starts with random weights and high exploration (epsilon = 1.0)
+1. **Initialization**: The agent starts with random weights and high exploration
 
 2. **Episode Loop**: For each episode:
    - Reset the environment
@@ -84,7 +84,7 @@ This reward structure encourages the agent to stay alive while heavily rewarding
    - Compute TD target: `reward + gamma * Q_target(next_state, argmax Q_online(next_state))`
    - Minimize MSE loss between predicted and target Q-values
 
-4. **Testing**: After training, run the agent for 5 episodes with rendering enabled to visualize performance
+4. **Testing**: After training, run the agent for 5 episodes to visualize performance
 
 ---
 
@@ -102,7 +102,7 @@ python3 flappyBirdDQN.py
 ```
 
 The agent will:
-- Train for 3,000 episodes (may take several hours)
+- Train for 3,000 episodes
 - Print progress every episode showing the average score of the last 500 episodes
 - Display 5 test episodes with visualization after training completes
 
