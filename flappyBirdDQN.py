@@ -1,4 +1,3 @@
-import time
 from collections import deque, namedtuple
 import flappy_bird_gymnasium
 import gymnasium as gym
