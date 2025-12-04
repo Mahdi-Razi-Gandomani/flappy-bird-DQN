@@ -106,9 +106,7 @@ This reward structure encourages the agent to stay alive while heavily rewarding
 
 ## References
 
-[1] V. Mnih et al., *Human-level control through deep reinforcement learning*,  
-Nature, vol. 518, pp. 529–533, 2015.  
+[1] V. Mnih et al., *Human-level control through deep reinforcement learning*,  Nature, vol. 518, pp. 529–533, 2015.  
 
-[2] H. van Hasselt, A. Guez, and D. Silver, *Deep Reinforcement Learning with Double Q-Learning*,  
-Proceedings of the AAAI Conference on Artificial Intelligence, 2016.  
+[2] H. van Hasselt, A. Guez, and D. Silver, *Deep Reinforcement Learning with Double Q-Learning*,  Proceedings of the AAAI Conference on Artificial Intelligence, 2016.  
 
