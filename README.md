@@ -108,14 +108,7 @@ This reward structure encourages the agent to stay alive while heavily rewarding
 
 [1] V. Mnih et al., *Human-level control through deep reinforcement learning*,  
 Nature, vol. 518, pp. 529–533, 2015.  
-https://www.nature.com/articles/nature14236  
 
 [2] H. van Hasselt, A. Guez, and D. Silver, *Deep Reinforcement Learning with Double Q-Learning*,  
 Proceedings of the AAAI Conference on Artificial Intelligence, 2016.  
-https://arxiv.org/abs/1509.06461  
-
-[8] Flappy Bird Gymnasium Environment (Talendar),  
-https://github.com/Talendar/flappy-bird-gymnasium  
-
-
 
