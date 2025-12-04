@@ -57,21 +57,6 @@ The Q-Network consists of:
 - Hidden layer 2: 256 neurons with ReLU activation
 - Output layer: 2 neurons (action Q-values for "do nothing" and "flap")
 
-### Hyperparameters
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `MEMORY_SIZE` | 100,000 | Replay buffer capacity |
-| `GAMMA` | 0.99 | Discount factor for future rewards |
-| `ALPHA` | 1e-3 | Learning rate |
-| `BATCH_SIZE` | 128 | Mini-batch size for training |
-| `UPDATE_TARGET_EVERY` | 1,000 | Steps between target network updates |
-| `NUM_STEPS_FOR_UPDATE` | 4 | Steps between learning updates |
-| `EPSILON_START` | 1.0 | Initial exploration rate |
-| `EPSILON_END` | 0.01 | Minimum exploration rate |
-| `EPSILON_DECAY` | 0.995 | Epsilon decay rate per episode |
-| `MAX_EPISODES` | 3,000 | Total training episodes |
-
 ### Reward Shaping
 
 The agent uses modified rewards to accelerate learning:
