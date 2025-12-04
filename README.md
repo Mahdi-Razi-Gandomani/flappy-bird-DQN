@@ -1,6 +1,6 @@
 # Flappy Bird Reinforcement Learning
 
-This project implements a **Deep Q-Network (DQN)** agent to play the **Flappy Bird** game autonomously.  
+A Deep Q-Network (DQN) implementation with Double Q-Learning that trains an AI agent to play Flappy Bird using reinforcement learning.
 
 ---
 
@@ -16,9 +16,11 @@ Below is a GIF showing the DQN agent successfully playing Flappy Bird after trai
 
 ## Features
 
-- **Deep Q-Learning (DQN)** with experience replay
-- Target network updates for stable training
-- Epsilon-greedy action selection
+- **Double DQN Architecture**: Reduces overestimation bias by separating action selection from action evaluation
+- **Experience Replay**: Stores past experiences in a replay buffer for more stable learning
+- **Target Network**: Maintains a separate target network that updates periodically for training stability
+- **Epsilon-Greedy Exploration**: Balances exploration and exploitation with decaying epsilon
+- **Custom Reward Shaping**: Enhanced reward signals to guide learning more effectively
 ---
 
 ## Learning Curve
@@ -29,24 +31,75 @@ The following plot shows the average reward progression over 5000 episodes of tr
 
 ---
 
-## Code Structure
+## Requirements
 
-### 1. Environment Setup
-- The Flappy Bird environment is created using `gymnasium` and `flappy_bird_gymnasium`.
+```
+flappy-bird-gymnasium
+gymnasium
+numpy
+torch
+```
 
+Install dependencies:
+```bash
+pip install flappy-bird-gymnasium gymnasium numpy torch
+```
 
-### 2. Initialization
-   - Two neural networks: `q_network` and `target_q_network`
-   - Replay buffer to store experience tuples
+---
 
-### 3. Training Loop
-   - Epsilon-greedy policy for exploration vs. exploitation
-   - Stores `(state, action, reward, next_state, done)` in memory
-   - Periodically samples mini-batches to update Q-values
-   - Synchronizes target network weights every fixed number of steps
+## Algorithm Details
 
-### 4. Testing
-   - After training, the trained model plays the game visually
+### Network Architecture
+
+The Q-Network consists of:
+- Input layer: State size (12 features from the environment)
+- Hidden layer 1: 256 neurons with ReLU activation
+- Hidden layer 2: 256 neurons with ReLU activation
+- Output layer: 2 neurons (action Q-values for "do nothing" and "flap")
+
+### Hyperparameters
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `MEMORY_SIZE` | 100,000 | Replay buffer capacity |
+| `GAMMA` | 0.99 | Discount factor for future rewards |
+| `ALPHA` | 1e-3 | Learning rate |
+| `BATCH_SIZE` | 128 | Mini-batch size for training |
+| `UPDATE_TARGET_EVERY` | 1,000 | Steps between target network updates |
+| `NUM_STEPS_FOR_UPDATE` | 4 | Steps between learning updates |
+| `EPSILON_START` | 1.0 | Initial exploration rate |
+| `EPSILON_END` | 0.01 | Minimum exploration rate |
+| `EPSILON_DECAY` | 0.995 | Epsilon decay rate per episode |
+| `MAX_EPISODES` | 3,000 | Total training episodes |
+
+### Reward Shaping
+
+The agent uses modified rewards to accelerate learning:
+- **Passing a pipe**: +10.0
+- **Dying**: -10.0
+- **Staying alive**: +0.1
+
+This reward structure encourages the agent to stay alive while heavily rewarding successful pipe navigation.
+
+## How It Works
+
+1. **Initialization**: The agent starts with random weights and high exploration (epsilon = 1.0)
+
+2. **Episode Loop**: For each episode:
+   - Reset the environment
+   - Select actions using epsilon-greedy policy
+   - Store experiences in replay buffer
+   - Sample random mini-batches and train the network
+   - Update target network periodically
+   - Decay exploration rate
+
+3. **Double DQN Update**: 
+   - Use online network to select best action for next state
+   - Use target network to evaluate that action's Q-value
+   - Compute TD target: `reward + gamma * Q_target(next_state, argmax Q_online(next_state))`
+   - Minimize MSE loss between predicted and target Q-values
+
+4. **Testing**: After training, run the agent for 5 episodes with rendering enabled to visualize performance
 
 ---
 
@@ -63,12 +116,9 @@ cd flappy-bird-DQN
 python3 flappyBirdDQN.py
 ```
 
-During training, you'll see logs like:
-```
-Episode 100 | Total point average of the last 100 episodes: -6.28
-Episode 200 | Total point average of the last 100 episodes: -2.11
-```
+The agent will:
+- Train for 3,000 episodes (may take several hours)
+- Print progress every episode showing the average score of the last 500 episodes
+- Display 5 test episodes with visualization after training completes
 
-### 3. Watch the trained agent play
-Once training is complete, the script automatically runs a few test episodes
 
