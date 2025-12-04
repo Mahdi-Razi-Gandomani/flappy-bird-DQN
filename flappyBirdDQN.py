@@ -156,6 +156,7 @@ for i in range(MAX_EPISODES):
 
 # Test Runs
 env = gym.make('FlappyBird-v0', render_mode='human', use_lidar=False)
+q_network.eval()
 test_scores = []
 for ep in range(5):
     observation, info = env.reset(seed=SEED + MAX_EPISODES + ep)
